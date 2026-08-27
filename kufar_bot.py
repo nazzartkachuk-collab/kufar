@@ -179,5 +179,5 @@ def main():
                     print("  Новых объявлений не найдено.")
         time.sleep(CHECK_INTERVAL)
 
-if __name__ == "__main__":
-    main()
+if name =
+= "main": bot.polling(none_stop=True)
