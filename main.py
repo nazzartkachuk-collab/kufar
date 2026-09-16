@@ -6,6 +6,7 @@ import threading
 from flask import Flask
 
 from aiogram import Bot, Dispatcher
+from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from bot import register_handlers, setup_scheduler
 
@@ -37,7 +38,10 @@ ADMIN_CHAT_ID = int(os.environ.get("ADMIN_CHAT_ID", "0"))
 
 
 async def main():
-    bot = Bot(token=TELEGRAM_TOKEN, parse_mode=ParseMode.MARKDOWN)
+       bot = Bot(
+        token=TELEGRAM_TOKEN,
+        default=DefaultBotProperties(parse_mode=ParseMode.MARKDOWN),
+    )
     dp = Dispatcher()
 
     register_handlers(dp)
