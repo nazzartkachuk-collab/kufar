@@ -32,9 +32,11 @@ async def get_fiat_rates() -> dict:
         result["USD/BYN"] = f'{by_code["USD"]["Cur_OfficialRate"]:.4f}'
     if "EUR" in by_code:
         result["EUR/BYN"] = f'{by_code["EUR"]["Cur_OfficialRate"]:.4f}'
-    if "RUB" in by_code:
-        result["100 RUB/BYN"] = f'{by_code["RUB"]["Cur_OfficialRate"] * 100:.4f}'
-
+        if "RUB" in by_code:
+        rub = by_code["RUB"]
+        # Курс за 1 RUB = Cur_OfficialRate / Cur_Scale
+        rate_per_1 = rub["Cur_OfficialRate"] / rub["Cur_Scale"]
+        result["100 RUB/BYN"] = f"{rate_per_1 * 100:.4f}"
     return result
 
 
