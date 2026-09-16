@@ -29,33 +29,40 @@ async def get_fiat_rates() -> dict:
     result = {}
 
     if "USD" in by_code:
-        result["USD/BYN"] = f'{by_code["USD"]["Cur_OfficialRate"]:.4f}'
+        usd = by_code["USD"]
+        result["USD/BYN"] = f'{usd["Cur_OfficialRate"]:.4f}'
+
     if "EUR" in by_code:
-        result["EUR/BYN"] = f'{by_code["EUR"]["Cur_OfficialRate"]:.4f}'
-        if "RUB" in by_code:
+        eur = by_code["EUR"]
+        result["EUR/BYN"] = f'{eur["Cur_OfficialRate"]:.4f}'
+
+    if "RUB" in by_code:
         rub = by_code["RUB"]
-        # Курс за 1 RUB = Cur_OfficialRate / Cur_Scale
+        # Cur_Scale для RUB = 100, поэтому сначала приводим к курсу за 1 RUB
         rate_per_1 = rub["Cur_OfficialRate"] / rub["Cur_Scale"]
         result["100 RUB/BYN"] = f"{rate_per_1 * 100:.4f}"
+
     return result
 
 
 # ---------- КРИПТОВАЛЮТЫ (Binance) ----------
 BINANCE_URL = "https://api.binance.com/api/v3/ticker/price"
 
-SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
+# TONUSDT — это Toncoin, который был переименован в Gram.
+SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "TONUSDT"]
 
 SYMBOL_NAMES = {
     "BTCUSDT": "BTC",
     "ETHUSDT": "ETH",
     "SOLUSDT": "SOL",
+    "TONUSDT": "GRAM",
 }
 
 
 async def get_crypto_rates() -> dict:
     """
-    Возвращает курсы BTC, ETH, SOL в USDT через публичный API Binance.
-    Не требует API-ключа. Лимиты для базовых запросов отсутствуют.
+    Возвращает курсы BTC, ETH, SOL, GRAM в USDT через публичный API Binance.
+    Не требует API-ключа.
     """
     symbols_param = '["' + '","'.join(SYMBOLS) + '"]'
     params = {"symbols": symbols_param}
