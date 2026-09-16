@@ -41,6 +41,10 @@ async def send_crypto_notification(bot: Bot, chat_id: int):
 
 
 def setup_scheduler(bot: Bot, chat_id: int) -> AsyncIOScheduler:
+    """
+    Каждые 12 часов (08:00 и 20:00 по Минску) — курсы валют.
+    Каждый час — курсы крипты.
+    """
     scheduler = AsyncIOScheduler(timezone="Europe/Minsk")
 
     scheduler.add_job(
