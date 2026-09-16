@@ -1,7 +1,6 @@
 import logging
-from datetime import datetime
 
-from aiogram import Bot, Dispatcher, F
+from aiogram import Bot, Dispatcher
 from aiogram.filters import Command
 from aiogram.types import Message
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -10,7 +9,7 @@ from fetchers import get_fiat_rates, get_crypto_rates
 
 logger = logging.getLogger(__name__)
 
-# ---------- Вспомогательные функции форматирования ----------
+
 def format_fiat(rates: dict) -> str:
     if not rates:
         return "⚠️ Не удалось получить курсы валют. Попробуйте позже."
@@ -29,7 +28,6 @@ def format_crypto(rates: dict) -> str:
     return "\n".join(lines)
 
 
-# ---------- Планировщик ----------
 async def send_fiat_notification(bot: Bot, chat_id: int):
     rates = await get_fiat_rates()
     text = format_fiat(rates)
@@ -43,13 +41,8 @@ async def send_crypto_notification(bot: Bot, chat_id: int):
 
 
 def setup_scheduler(bot: Bot, chat_id: int) -> AsyncIOScheduler:
-    """
-    Каждые 12 часов (08:00 и 20:00) — курсы валют.
-    Каждый час — курсы крипты.
-    """
     scheduler = AsyncIOScheduler(timezone="Europe/Minsk")
 
-    # Валюты: 08:00 и 20:00
     scheduler.add_job(
         send_fiat_notification,
         "cron",
@@ -60,7 +53,6 @@ def setup_scheduler(bot: Bot, chat_id: int) -> AsyncIOScheduler:
         replace_existing=True,
     )
 
-    # Крипта: каждый час (начиная с 00:00)
     scheduler.add_job(
         send_crypto_notification,
         "cron",
@@ -73,7 +65,6 @@ def setup_scheduler(bot: Bot, chat_id: int) -> AsyncIOScheduler:
     return scheduler
 
 
-# ---------- Хендлеры команд ----------
 async def cmd_start(message: Message):
     await message.answer(
         "👋 Привет! Я бот для отслеживания курсов.\n\n"
